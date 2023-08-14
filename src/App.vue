@@ -14,7 +14,7 @@
           :key="item.id"
           :to-do-item="item"
           @toggle-complete-task-status="handleChangeTaskStatus"
-          @delete-task="handleDeleteTask"
+          @delete-task="handleDeleteClick"
           @edit-task="handleEditTask"
           v-if="todoList.length > 0"
         />
@@ -23,11 +23,10 @@
     </section>
   </div>
   <CustomEditTaskDialog ref="dialogEditRef" @save-changes="saveChanges" />
-  <!-- <CustomDeleteTaskDialog
+  <CustomDeleteTaskDialog
     ref="dialogDeleteRef"
-    @save-changes="saveChanges"
-    @cancel-changes="closeDialod"
-  /> -->
+    @confirm-delete="handleDeleteConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -43,9 +42,11 @@ import CustomInput from "./components/CustomInput.vue";
 import CustomButton from "./components/CustomButton.vue";
 import ListItem from "./components/ListItem.vue";
 import CustomEditTaskDialog from "./components/CustomEditTaskDialog.vue";
+import CustomDeleteTaskDialog from "./components/CustomDeleteTaskDialog.vue";
 
 const inputText = ref("");
 const dialogEditRef = ref<InstanceType<typeof CustomEditTaskDialog>>();
+const dialogDeleteRef = ref<InstanceType<typeof CustomDeleteTaskDialog>>();
 
 const todoList = useStorage<ToDoItemType[]>("todoList", []);
 
@@ -72,8 +73,13 @@ const handleChangeTaskStatus = (value: EmitCompleteTaskType): void => {
   todoList.value[taskIndex].completed = value.completed;
 };
 
-const handleDeleteTask = (id: number): void => {
+const handleDeleteClick = (id: number): void => {
+  dialogDeleteRef.value?.showDialog(id);
+};
+
+const handleDeleteConfirm = (id: number): void => {
   todoList.value = todoList.value.filter((task) => task.id !== id);
+  dialogDeleteRef.value?.closeDialog();
 };
 
 const handleEditTask = (id: number): void => {
