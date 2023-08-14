@@ -1,6 +1,7 @@
 <template>
   <button
     class="custom-btn"
+    :class="{ 'btn-danger': danger }"
     :type="btnType ? btnType : 'button'"
     @click="handleBtnClicked"
   >
@@ -14,6 +15,7 @@ import { ButtonHTMLAttributes } from "vue";
 type CustomBtnProps = {
   btnText: string;
   btnType?: ButtonHTMLAttributes["type"];
+  danger?: boolean;
 };
 
 type CustomBtnEmits = {
@@ -47,5 +49,10 @@ const handleBtnClicked = () => {
 .custom-btn:hover {
   background: transparent;
   color: var(--btn-background-color);
+}
+
+.btn-danger {
+  --btn-background-color: #d61717;
+  --btn-color: #ffffffde;
 }
 </style>
