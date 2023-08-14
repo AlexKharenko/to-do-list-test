@@ -22,16 +22,16 @@
       </TransitionGroup>
     </section>
   </div>
-  <CustomEditTaskDialog
-    :is-opened="isEditDialogOpen"
-    ref="dialogRef"
+  <CustomEditTaskDialog ref="dialogEditRef" @save-changes="saveChanges" />
+  <!-- <CustomDeleteTaskDialog
+    ref="dialogDeleteRef"
     @save-changes="saveChanges"
     @cancel-changes="closeDialod"
-  />
+  /> -->
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import { useStorage } from "@vueuse/core";
 import {
   EmitCompleteTaskType,
@@ -45,8 +45,7 @@ import ListItem from "./components/ListItem.vue";
 import CustomEditTaskDialog from "./components/CustomEditTaskDialog.vue";
 
 const inputText = ref("");
-const dialogRef = ref<InstanceType<typeof CustomEditTaskDialog>>();
-const isEditDialogOpen = ref(false);
+const dialogEditRef = ref<InstanceType<typeof CustomEditTaskDialog>>();
 
 const todoList = useStorage<ToDoItemType[]>("todoList", []);
 
@@ -82,21 +81,14 @@ const handleEditTask = (id: number): void => {
   if (!foundTask) {
     return;
   }
-  isEditDialogOpen.value = true;
-  nextTick(() => {
-    dialogRef.value?.setData(foundTask);
-  });
+  dialogEditRef.value?.showDialog(foundTask);
 };
 
 const saveChanges = (value: EmitContentTaskType) => {
   const taskIndex = todoList.value.findIndex((task) => task.id === value.id);
   if (taskIndex === -1) return;
   todoList.value[taskIndex].content = value.content;
-  closeDialod();
-};
-
-const closeDialod = () => {
-  isEditDialogOpen.value = false;
+  dialogEditRef.value?.closeDialog();
 };
 </script>
 
