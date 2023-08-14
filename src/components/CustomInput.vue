@@ -46,5 +46,9 @@ const updateModelValue = (event: Event) => {
   width: auto;
   outline: none;
   width: 100%;
+  appearance: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
 }
 </style>
